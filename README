@@ -1,3 +1,5 @@
+Authors: Yueyu Jiang and Metin Balaban
+
 Usage of uDance pipeline
 
 1. Run `bash install.sh` to install the conda environment.
