@@ -16,7 +16,7 @@ check = False
 while not check:
     cnt = 0
     for d in subdir:
-        if os.path.isfile(os.path.join(d, 'seqs', 'RAxML_bestTree.file')):
+        if os.path.isfile(os.path.join(d, 'seqs', 'RUN.treefile')):
             cnt += 1
     if cnt == len(subdir):
         check = True

@@ -5,10 +5,11 @@
 # $4 out dir
 # $5 threads
 
-while getopts b:s:l:o:t:c: flag
+while getopts b:j:s:l:o:t:c: flag
 do
 	case "${flag}" in
 		b) tree=${OPTARG};;
+		j) jplace=${OPTARG};;
 		s) seq=${OPTARG};;
 		l) tolerance=${OPTARG};;
 		o) out_dir=${OPTARG};;
@@ -20,10 +21,6 @@ done
 export PROJ_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 export SCRIPTS_DIR=$PROJ_DIR/scripts
 
-module load cpu/0.15.4
-module load gcc/10.2.0
-module load openmpi/4.0.4
-module load raxml/8.2.12
 eval "$(conda shell.bash hook)"
 conda activate sarscov2monitor
 
@@ -35,8 +32,8 @@ do
 	else
 		backbone_tree=${out_dir}/$((${i}-1))/didactic.nwk
 	fi
-	subset="${subset:-2000}"
-	bash $SCRIPTS_DIR/run_onetime.sh ${backbone_tree} ${seq} ${out_dir} ${i} ${threads} ${subset}
+	subset="${subset:-10000}"
+	bash $SCRIPTS_DIR/run_onetime.sh ${backbone_tree} ${seq} ${out_dir} ${i} ${threads} ${subset} ${jplace}
 	echo ${tolerance}
 	if [ $( wc -l <${out_dir}/${i}/unplaced.csv ) -lt ${tolerance} ];
 	then

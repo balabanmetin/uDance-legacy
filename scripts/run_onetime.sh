@@ -5,6 +5,7 @@
 # $4 run time
 # $5 threads
 # $6 subset size
+# $7 jplace
 
 export SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 bash $SCRIPTS_DIR/dedup.sh ${1} ${2} ${3}/${4}
@@ -18,13 +19,18 @@ else
         # deroot fail
 	cp ${3}/${4}/backbone.tree ${3}/${4}/backbone_deroot.tree
 fi
-run_apples.py -m OLS -s ${3}/${4}/backbone.fa -q ${3}/${4}/query.fa -t ${3}/${4}/backbone_deroot.tree -o ${3}/${4}/placement.jplace -f 1e-5 -b 25 -T ${5} 
-python $SCRIPTS_DIR/didactic/run_didactic.py decompose -o ${3}/${4} -j ${3}/${4}/placement.jplace -s ${3}/${4}/seqs/ -e 0.0005  -f ${6} -T ${5} -m "raxml-8"
+if [ -z "$7" ]; then
+    # apples commit 3bc50da
+	~/apples/run_apples.py -m FM -s ${3}/${4}/backbone.fa -q ${3}/${4}/query.fa -t ${3}/${4}/backbone_deroot.tree -o ${3}/${4}/placement.jplace -V 0.05 -f 0 -b 6 -T ${5} > ${3}/${4}/placement.output
+else
+	cp ${7} ${3}/${4}/placement.jplace
+fi
+python $SCRIPTS_DIR/didactic/run_didactic.py decompose -o ${3}/${4} -j ${3}/${4}/placement.jplace -s ${3}/${4}/seqs/ -e 0.02 -f ${6} -T ${5} -m "iqtree"
 # we assume 8 cores will be given to each raxml job. PAR denotes number of raxml jobs that should
 # will run in parallel
-PAR=`python -c "print(max($5//16,1))"`
+PAR=`python -c "print(max($5//4,1))"`
 cat ${3}/${4}/main_raxml_script_0.sh | xargs -n1 -P${PAR} -I% bash -c "%"
 python $SCRIPTS_DIR/waiting.py --out-dir ${3}/${4}
-python $SCRIPTS_DIR/didactic/run_didactic.py refine -T ${5} -o ${3}/${4} -m "raxml-8"
+python $SCRIPTS_DIR/didactic/run_didactic.py refine -T ${5} -o ${3}/${4} -m "iqtree"
 bash ${3}/${4}/main_astral_script.sh 
 python $SCRIPTS_DIR/didactic/run_didactic.py stitch -o ${3}/${4}

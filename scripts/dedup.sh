@@ -12,7 +12,7 @@ fi
 if [ ! -d "${3}/seqs" ]; then
 	mkdir ${3}/seqs
 fi
-nw_labels ${1} > ${temp_dir}/backbone_id.txt
+nw_labels -I ${1} > ${temp_dir}/backbone_id.txt
 grep ">" ${2} | sed "s/>//g"  > ${temp_dir}/all_id.txt
 python $SCRIPTS_DIR/order_id.py --backbone ${temp_dir}/backbone_id.txt --all ${temp_dir}/all_id.txt --out-dir ${temp_dir}
 { seqkit grep -f ${temp_dir}/backbone_id.txt ${2} -w 0 ; seqkit grep -f ${temp_dir}/query_id.txt ${2} -w 0; } >> ${temp_dir}/reorder.fa 2>> ${3}/error.log
