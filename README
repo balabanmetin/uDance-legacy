@@ -1,3 +1,7 @@
+uDance v1.1.0. This is the legacy version of uDance. The latest version of uDance is located at https://github.com/balabanmetin/uDance
+
+This version is limited to incremental tree growing, refinement using IQTree-fastmode, and can be run in a single cluster node.
+
 Authors: Yueyu Jiang and Metin Balaban
 
 Usage of uDance pipeline
